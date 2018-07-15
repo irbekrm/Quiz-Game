@@ -1,6 +1,7 @@
 package main
 
 import (
+  "flag"
   "bufio"
   "strings"
   "os"
@@ -13,7 +14,20 @@ import (
 var correct int
 var incorrect int
 
+func helpPrinter() {
+  text := "NAME\n\tQuizz Game\n\nDESCRIPTION\n\tAsks a number of quizz questions. " +
+  "Waits for user's answer after each question. Prints the score at the end.\n\n" +
+  "-h\n\tprints a short description of the app and then exits\n\n"
+  fmt.Println(text)
+  os.Exit(0)
+}
+
 func main() {
+  h := flag.Bool("h", false, "print usage description")
+  flag.Parse()
+  if *h  {
+    helpPrinter()
+  }
   reader := bufio.NewReader(os.Stdin)
   fn := "problems.csv"
 
