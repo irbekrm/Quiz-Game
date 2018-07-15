@@ -57,6 +57,5 @@ func main() {
       incorrect++
     }
   }
-  fmt.Println("Correct:", correct, "incorrect:", incorrect)
-  
+  fmt.Printf("Score: %d/%d\n", correct, correct + incorrect)
 }
