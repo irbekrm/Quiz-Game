@@ -7,13 +7,12 @@ import (
   "os"
   "fmt"
   "encoding/csv"
-  "io"
 )
 
 
 var fn = "problems.csv"
 var correct int
-var incorrect int
+var totalNumberOfQuestions int
 
 func helpPrinter() {
   text := "NAME\n\tQuizz Game\n\nDESCRIPTION\n\tAsks a number of quizz questions. " +
@@ -45,23 +44,20 @@ func main() {
 
   r := csv.NewReader(f)
 
-  for {
-    record, err := r.Read()
-    if err == io.EOF {
-      break
-    }
-    if err != nil {
-      fmt.Println("Error ", err)
-      os.Exit(1)
-    }
+  records, err := r.ReadAll()
+  totalNumberOfQuestions = len(records)
+
+  if err != nil {
+    fmt.Println("Error", err)
+  }
+
+  for _, record := range records {
     fmt.Println("What is " + record[0] + "?")
     input, _ := reader.ReadString('\n')
     input = strings.TrimRight(input, "\n")
     if input == record[1] {
       correct++
-    } else {
-      incorrect++
     }
   }
-  fmt.Printf("Score: %d/%d\n", correct, correct + incorrect)
+  fmt.Printf("Score: %d/%d\n", correct, totalNumberOfQuestions)
 }
