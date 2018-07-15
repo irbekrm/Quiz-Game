@@ -1,6 +1,8 @@
 package main
 
 import (
+  "time"
+  "math/rand"
   "flag"
   "bufio"
   "strings"
@@ -14,19 +16,32 @@ var fn = "problems.csv"
 var correct int
 var totalNumberOfQuestions int
 
+func shuffle(s [][]string) [][]string {
+  source := rand.NewSource(time.Now().UnixNano())
+  r := rand.New(source)
+  for i := range s {
+    newPosition := r.Intn(len(s) - 1)
+    s[i], s[newPosition] = s[newPosition], s[i]
+  }
+  return s
+}
+
+
 func helpPrinter() {
   text := "NAME\n\tQuizz Game\n\nDESCRIPTION\n\tAsks a number of quizz questions. " +
   "Waits for user's answer after each question. Prints the score at the end.\n\n" +
-  "-h\n\tprints a short description of the app and then exits\n\n" +
+  "-h\n\tprints a short usage description and then exits\n\n" +
   "-f\n\taccepts name of a file to read quizzes from. It should be a csv file " +
-  "in format 'question, answer'. If no filename is passed, reads from the default quizzes file.\n\n"
+  "in format 'question, answer'. If no filename is passed, reads from the default quizzes file.\n\n" +
+  "-s\n\tshuffle the questions\n\n"
   fmt.Println(text)
   os.Exit(0)
 }
 
 func main() {
-  n := flag.String("f", "", "provide file")
+  n := flag.String("f", "", "provide filename")
   h := flag.Bool("h", false, "print usage description")
+  s := flag.Bool("s", false, "shuffle the questions")
   flag.Parse()
   if *h  {
     helpPrinter()
@@ -45,10 +60,15 @@ func main() {
   r := csv.NewReader(f)
 
   records, err := r.ReadAll()
-  totalNumberOfQuestions = len(records)
 
   if err != nil {
     fmt.Println("Error", err)
+  }
+
+  totalNumberOfQuestions = len(records)
+
+  if *s {
+    records = shuffle(records)
   }
 
   for _, record := range records {
