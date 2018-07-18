@@ -14,17 +14,19 @@ User can set a different timeout, provide another quizz file and shuffle quizz q
 
 (If you don't have *go* installed and go workspace set up, follow the instructions here: https://golang.org/doc/install)
 
-*go install https://github.com/irbekrm/Quizz-Game* install the package
+*go get github.com/irbekrm/Quizz-Game* download and install this package
 
-*go build ./main.go -h* print help
+*cd ~/go/src/github.com/irbekrm/Quizz-Game* (UNIX only) go to the package directory
 
-*go build ./main.go* run the default version
+*go run ./main.go -h* print help
 
-*go build ./main.go -s* shuffle the questions
+*go run ./main.go* run the default version
 
-*go build ./main.go -f \<filename\>* provide own csv file with quizzes. File should be in format *question,answer*
+*go run ./main.go -s* shuffle the questions
 
-*go build ./main.go -t \<x\>* set timeout to x seconds
+*go run ./main.go -f \<filename\>* provide own csv file with quizzes. File should be in format *question,answer*
+
+*go run ./main.go -t \<x\>* set timeout to x seconds
 
 ### Implementation
 
