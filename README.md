@@ -16,7 +16,7 @@ User can set a different timeout, provide another quizz file and shuffle quizz q
 
 *go get github.com/irbekrm/Quizz-Game* download and install this package
 
-*cd ~/go/src/github.com/irbekrm/Quizz-Game* (UNIX only) go to the package directory
+*cd ~/go/src/github.com/irbekrm/Quizz-Game* go to the package directory
 
 *go run ./main.go -h* print help
 
