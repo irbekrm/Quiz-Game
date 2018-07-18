@@ -17,9 +17,24 @@ var (
 	record                 []string
 	correct                int
 	totalNumberOfQuestions int
+	quizzItem              QuizzItem
 )
 
 var fn = "problems.csv"
+
+type QuizzItem struct {
+	question string
+	answer   string
+}
+
+func (q *QuizzItem) setValues(s []string) {
+	(*q).question = s[0]
+	(*q).answer = s[1]
+}
+
+func (q QuizzItem) isAnswerCorrect(s string) bool {
+	return q.answer == s
+}
 
 func shuffle(s [][]string) [][]string {
 	source := rand.NewSource(time.Now().UnixNano())
@@ -99,18 +114,18 @@ func main() {
 	input := make(chan string)
 	timePassed := make(chan bool)
 
-  in := bufio.NewReader(os.Stdin)
-  fmt.Printf("You have %d seconds to answer %d questions. Press Enter when ready\n", *t, totalNumberOfQuestions)
-  in.ReadString('\n')
+	in := bufio.NewReader(os.Stdin)
+	fmt.Printf("You have %d seconds to answer %d questions. Press Enter when ready\n", *t, totalNumberOfQuestions)
+	in.ReadString('\n')
 	go sleeper(*t, timePassed)
 	go asker(input)
 
 	for counter < len(records) && !timeout {
-		record = records[counter]
-		fmt.Printf("What is %s?\n", record[0])
+		(&quizzItem).setValues(records[counter])
+		fmt.Printf("What is %s?\n", quizzItem.question)
 		select {
 		case i := <-input:
-			if i == record[1] {
+			if quizzItem.isAnswerCorrect(i) {
 				correct++
 			}
 		case <-timePassed:
