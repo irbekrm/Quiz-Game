@@ -98,6 +98,10 @@ func main() {
 
 	input := make(chan string)
 	timePassed := make(chan bool)
+
+  in := bufio.NewReader(os.Stdin)
+  fmt.Printf("You have %d seconds to answer %d questions. Press Enter when ready\n", *t, totalNumberOfQuestions)
+  in.ReadString('\n')
 	go sleeper(*t, timePassed)
 	go asker(input)
 
