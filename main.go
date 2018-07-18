@@ -11,9 +11,15 @@ import (
 	"time"
 )
 
+var (
+	counter                int
+	timeout                bool
+	record                 []string
+	correct                int
+	totalNumberOfQuestions int
+)
+
 var fn = "problems.csv"
-var correct int
-var totalNumberOfQuestions int
 
 func shuffle(s [][]string) [][]string {
 	source := rand.NewSource(time.Now().UnixNano())
@@ -71,13 +77,13 @@ func main() {
 	}
 
 	f, err := os.Open(fn)
+
 	if err != nil {
 		fmt.Println("Error ", err)
 		os.Exit(1)
 	}
 
 	r := csv.NewReader(f)
-
 	records, err := r.ReadAll()
 
 	if err != nil {
@@ -95,9 +101,6 @@ func main() {
 	go sleeper(*t, timePassed)
 	go asker(input)
 
-	var counter int
-	var timeout bool
-	var record []string
 	for counter < len(records) && !timeout {
 		record = records[counter]
 		fmt.Printf("What is %s?\n", record[0])
