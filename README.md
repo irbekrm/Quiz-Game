@@ -1,5 +1,6 @@
 Quizz-Game
 ===
+The first exercise from https://gophercises.com/exercises/
 
 ### Description
 
