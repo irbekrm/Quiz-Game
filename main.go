@@ -1,57 +1,32 @@
 package main
 
+//importing dependencies
 import (
 	"bufio"
-	"encoding/csv"
 	"flag"
 	"fmt"
 	"math/rand"
 	"os"
 	"strings"
 	"time"
+    "strconv"
 )
 
+//declaring variables
 var (
 	counter                int
 	timeout                bool
-	record                 []string
 	correct                int
-	totalNumberOfQuestions int
-	quizzItem              QuizzItem
 )
 
-var fn = "problems.csv"
-
-type QuizzItem struct {
-	question string
-	answer   string
-}
-
-func (q *QuizzItem) setValues(s []string) {
-	(*q).question = s[0]
-	(*q).answer = s[1]
-}
-
-func (q QuizzItem) isAnswerCorrect(s string) bool {
-	return q.answer == s
-}
-
-func shuffle(s [][]string) [][]string {
-	source := rand.NewSource(time.Now().UnixNano())
-	r := rand.New(source)
-	for i := range s {
-		newPosition := r.Intn(len(s) - 1)
-		s[i], s[newPosition] = s[newPosition], s[i]
-	}
-	return s
-}
-
+//defining function which times the user
 func sleeper(n int, c chan bool) {
 	seconds := time.Duration(n) * time.Second
 	time.Sleep(seconds)
 	c <- true
 }
 
+//defining a function which prints help messages for the user
 func helpPrinter() {
 	text := "NAME\n\tQuizz Game\n\nDESCRIPTION\n\tAsks a number of quizz questions. " +
 		"Waits for user's answer after each question. Prints the score at the end. Default timeout 30s.\n\n" +
@@ -64,6 +39,7 @@ func helpPrinter() {
 	os.Exit(0)
 }
 
+//definging a function to read the user input
 func asker(input chan string) {
 	for {
 		in := bufio.NewReader(os.Stdin)
@@ -77,55 +53,38 @@ func asker(input chan string) {
 	}
 }
 
+//defining a main function
 func main() {
-	n := flag.String("f", "", "provide filename")
 	h := flag.Bool("h", false, "print usage description")
-	s := flag.Bool("s", false, "shuffle the questions")
 	t := flag.Int("t", 30, "timeout. requires an int argument")
 	flag.Parse()
 
 	if *h {
 		helpPrinter()
 	}
-	if *n != "" {
-		fn = *n
-	}
-
-	f, err := os.Open(fn)
-
-	if err != nil {
-		fmt.Println("Error ", err)
-		os.Exit(1)
-	}
-
-	r := csv.NewReader(f)
-	records, err := r.ReadAll()
-
-	if err != nil {
-		fmt.Println("Error", err)
-	}
-
-	totalNumberOfQuestions = len(records)
-
-	if *s {
-		records = shuffle(records)
-	}
 
 	input := make(chan string)
 	timePassed := make(chan bool)
 
 	in := bufio.NewReader(os.Stdin)
-	fmt.Printf("You have %d seconds to answer %d questions. Press Enter when ready\n", *t, totalNumberOfQuestions)
+	fmt.Printf("You have %d seconds to answer 12 questions. Press Enter when ready\n", *t)
 	in.ReadString('\n')
 	go sleeper(*t, timePassed)
 	go asker(input)
 
-	for counter < len(records) && !timeout {
-		(&quizzItem).setValues(records[counter])
-		fmt.Printf("What is %s?\n", quizzItem.question)
+    //my contribution lies here
+    //the program now generates two random numbers, calculates the answer and compares 
+    //it to the users answer
+	for counter < 12 && !timeout {
+        rand.Seed(time.Now().UTC().UnixNano())
+		var int1 int = rand.Intn(10)
+		var int2 int = rand.Intn(10)
+		var answer int = int1 + int2
+		var newAnswer string = strconv.Itoa(answer)
+		fmt.Printf("What is %d+%d?\n", int1, int2)
 		select {
 		case i := <-input:
-			if quizzItem.isAnswerCorrect(i) {
+			if i == newAnswer {
 				correct++
 			}
 		case <-timePassed:
@@ -135,5 +94,6 @@ func main() {
 		counter++
 	}
 
-	fmt.Printf("Score: %d/%d\n", correct, totalNumberOfQuestions)
+	fmt.Printf("Score: %d/12\n", correct)
 }
+
